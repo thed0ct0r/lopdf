@@ -195,14 +195,14 @@ fn object<'a>(reader: &'a Reader) -> Parser<'a, u8, Object> {
 pub fn indirect_object(
     input: &[u8], offset: usize, expected_id: Option<ObjectId>, reader: &Reader,
 ) -> Result<(ObjectId, Object)> {
-    _indirect_object(expected_id, reader)
+    _indirect_object(false, expected_id, reader)
         .parse_at(input, offset)
         .map(|(out, _)| out)
         .map_err(|_| Error::Parse { offset })
 }
 
-fn _indirect_object<'a>(expected_id: Option<ObjectId>, reader: &'a Reader) -> Parser<'a, u8, (ObjectId, Object)> {
-    log::debug!("{reader:?}");
+fn _indirect_object<'a>(should_print: bool, expected_id: Option<ObjectId>, reader: &'a Reader) -> Parser<'a, u8, (ObjectId, Object)> {
+    if should_print { log::debug!("{reader:?}"); }
 
     object_id().convert(move |id| match expected_id {
         Some(expected_id) if expected_id == id => Ok(id),
@@ -263,7 +263,7 @@ fn _xref_and_trailer<'a>(reader: &'a Reader) -> Parser<'a, u8, (Xref, Dictionary
             .and_then(Object::as_i64)
             .map_err(|_| Error::Trailer)? as u32;
         Ok((xref, trailer))
-    }) | _indirect_object(None, reader).convert(|(_, obj)| match obj {
+    }) | _indirect_object(true, None, reader).convert(|(_, obj)| match obj {
         Object::Stream(stream) => decode_xref_stream(stream),
         _ => Err(Error::Xref(XrefError::Parse)),
     })
