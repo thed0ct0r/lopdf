@@ -416,10 +416,14 @@ fn trailer(input: &[u8]) -> NomResult<Dictionary> {
 pub fn xref_and_trailer(input: &[u8], reader: &Reader) -> crate::Result<(Xref, Dictionary)> {
     alt((
         map(pair(xref, trailer), |(mut xref, trailer)| {
+            log::debug!("\n\nis this first???!!!\n\n");
             xref.size = trailer
                 .get(b"Size")
                 .and_then(Object::as_i64)
-                .map_err(|_| Error::Trailer)? as u32;
+                .map_err(|err| {
+                    log::debug!("trailer error => {err:?}");
+                    Error::Trailer
+                })? as u32;
             Ok((xref, trailer))
         }),
         (|input| {
