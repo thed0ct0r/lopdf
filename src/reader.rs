@@ -143,6 +143,7 @@ impl<'a> Reader<'a> {
             return Err(Error::Xref(XrefError::Start));
         }
         self.document.xref_start = xref_start;
+        log::debug!("xref_start => {xref_start:?}");
 
         let (mut xref, mut trailer) = parser::xref_and_trailer(&self.buffer[xref_start..], &self)?;
 
