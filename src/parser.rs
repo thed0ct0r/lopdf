@@ -255,7 +255,7 @@ pub fn xref_and_trailer<'a>(input: &'a [u8], reader: &'a Reader) -> Result<(Xref
 }
 
 fn _xref_and_trailer<'a>(reader: &'a Reader) -> Parser<'a, u8, (Xref, Dictionary)> {
-    log::debug!("reader: {reader:?}");
+    //log::debug!("reader: {reader:?}");
     (xref() + trailer()).convert(|(mut xref, trailer)| -> Result<_> {
         xref.size = trailer
             .get(b"Size")
