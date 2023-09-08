@@ -248,12 +248,14 @@ fn trailer<'a>() -> Parser<'a, u8, Dictionary> {
 }
 
 pub fn xref_and_trailer<'a>(input: &'a [u8], reader: &'a Reader) -> Result<(Xref, Dictionary)> {
+    log::debug!("input: {:?}", String::from_utf8(input));
     _xref_and_trailer(reader)
         .parse(input)
         .map_err(|_| Error::Xref(XrefError::Parse))
 }
 
 fn _xref_and_trailer<'a>(reader: &'a Reader) -> Parser<'a, u8, (Xref, Dictionary)> {
+    log::debug!("reader: {reader:?}");
     (xref() + trailer()).convert(|(mut xref, trailer)| -> Result<_> {
         xref.size = trailer
             .get(b"Size")
