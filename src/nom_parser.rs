@@ -428,7 +428,10 @@ pub fn xref_and_trailer(input: &[u8], reader: &Reader) -> crate::Result<(Xref, D
         }),
     ))(input)
     .map(|(_, o)| o)
-    .unwrap_or(Err(Error::Trailer))
+    .unwrap_or_else(|err| {
+        log::trace!("err => {err:?}");
+        Err(Error::Trailer)
+    })
 }
 
 pub fn xref_start(input: &[u8]) -> Option<i64> {
