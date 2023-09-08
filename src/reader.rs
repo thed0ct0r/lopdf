@@ -122,6 +122,7 @@ impl TryInto<IncrementalDocument> for &[u8] {
     }
 }
 
+#[derive(Debug)]
 pub struct Reader<'a> {
     pub buffer: &'a [u8],
     pub document: Document,
