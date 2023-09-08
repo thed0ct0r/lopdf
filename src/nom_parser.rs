@@ -344,7 +344,10 @@ pub fn indirect_object(
 fn _indirect_object(
     input: &[u8], offset: usize, expected_id: Option<ObjectId>, reader: &Reader,
 ) -> crate::Result<(ObjectId, Object)> {
-    let (i, object_id) = terminated(object_id, pair(tag(b"obj"), space))(input).map_err(|_| Error::Parse { offset })?;
+    let (i, object_id) = terminated(object_id, pair(tag(b"obj"), space))(input).map_err(|err| {
+        log::debug!("terminated1 err => {err:?}");
+        Error::Parse { offset }
+    })?;
     if let Some(expected_id) = expected_id {
         if object_id != expected_id {
             return Err(crate::error::Error::ObjectIdMismatch);
@@ -353,7 +356,10 @@ fn _indirect_object(
 
     let object_offset = input.len() - i.len();
     let (_, mut object) = terminated(|i| object(i, reader), tuple((space, opt(tag(b"endobj")), space)))(i)
-        .map_err(|_| Error::Parse { offset })?;
+        .map_err(|err| {
+            log::debug!("terminated2 err => {err:?}");
+            Error::Parse { offset }
+        })?;
 
     offset_stream(&mut object, object_offset);
 
