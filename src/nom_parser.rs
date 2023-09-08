@@ -424,7 +424,10 @@ pub fn xref_and_trailer(input: &[u8], reader: &Reader) -> crate::Result<(Xref, D
                     };
                     (input, res)
                 })
-                .map_err(|_| nom::Err::Error(()))
+                .map_err(|err| {
+                    log::debug!("nom-err => {err:?}");
+                    nom::Err::Error(())
+                })
         }),
     ))(input)
     .map(|(_, o)| o)
