@@ -136,6 +136,7 @@ impl<'a> Reader<'a> {
         // The document structure can be expressed in PEG as:
         //   document <- header indirect_object* xref trailer xref_start
         let version = parser::header(self.buffer).ok_or(Error::Header)?;
+        log::debug!("version => {version:?}");
 
         let xref_start = Self::get_xref_start(self.buffer)?;
         if xref_start > self.buffer.len() {
@@ -402,13 +403,13 @@ endstream endobj\n",
     let doc = format!(
         "{}xref
 0 7
-0000000000 65535 f 
-0000000009 00000 n 
-0000000096 00000 n 
-0000000155 00000 n 
-0000000291 00000 n 
-0000000191 00000 n 
-0000000248 00000 n 
+0000000000 65535 f
+0000000009 00000 n
+0000000096 00000 n
+0000000155 00000 n
+0000000291 00000 n
+0000000191 00000 n
+0000000248 00000 n
 trailer
 <</Root 6 0 R/Size 7>>
 startxref
@@ -453,14 +454,14 @@ endstream endobj\n",
     let doc = format!(
         "{}xref
 0 7
-0000000000 65535 f 
-0000000009 00000 n 
-0000000096 00000 n 
-0000000155 00000 n 
-0000000387 00000 n 
-0000000191 00000 n 
-0000000254 00000 n 
-0000000297 00000 n 
+0000000000 65535 f
+0000000009 00000 n
+0000000096 00000 n
+0000000155 00000 n
+0000000387 00000 n
+0000000191 00000 n
+0000000254 00000 n
+0000000297 00000 n
 trailer
 <</Root 6 0 R/Size 7>>
 startxref
