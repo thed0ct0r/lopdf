@@ -380,6 +380,7 @@ pub fn header(input: &[u8]) -> Option<String> {
 
 /// Decode CrossReferenceTable
 fn xref(input: &[u8]) -> NomResult<Xref> {
+    log::debug!("\n\nin xref\n\n");
     let xref_eol = map(alt((tag(b" \r"), tag(b" \n"), tag(b"\r\n"))), |_| ());
     let xref_entry = pair(
         separated_pair(unsigned_int, tag(b" "), unsigned_int),
@@ -410,6 +411,7 @@ fn xref(input: &[u8]) -> NomResult<Xref> {
 }
 
 fn trailer(input: &[u8]) -> NomResult<Dictionary> {
+    log::debug!("\n\nin trailer\n\n");
     delimited(pair(tag(b"trailer"), space), dictionary, space)(input)
 }
 
