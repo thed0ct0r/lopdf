@@ -248,7 +248,7 @@ fn trailer<'a>() -> Parser<'a, u8, Dictionary> {
 }
 
 pub fn xref_and_trailer<'a>(input: &'a [u8], reader: &'a Reader) -> Result<(Xref, Dictionary)> {
-    log::debug!("input: {:?}", String::from_utf8(input));
+    log::debug!("input: {:?}", String::from_utf8(input.to_vec()));
     _xref_and_trailer(reader)
         .parse(input)
         .map_err(|_| Error::Xref(XrefError::Parse))
