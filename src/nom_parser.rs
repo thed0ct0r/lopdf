@@ -344,6 +344,7 @@ pub fn indirect_object(
 fn _indirect_object(
     input: &[u8], offset: usize, expected_id: Option<ObjectId>, reader: &Reader,
 ) -> crate::Result<(ObjectId, Object)> {
+    log::debug!("offset: {offset}\ninput: {input:?}");
     let (i, object_id) = terminated(object_id, pair(tag(b"obj"), space))(input).map_err(|err| {
         log::debug!("terminated1 err => {err:?}");
         Error::Parse { offset }
