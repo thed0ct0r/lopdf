@@ -201,12 +201,9 @@ pub fn indirect_object(
         .map_err(|_| Error::Parse { offset })
 }
 
-static TEST_BOOL: bool = false;
 fn _indirect_object<'a>(expected_id: Option<ObjectId>, reader: &'a Reader) -> Parser<'a, u8, (ObjectId, Object)> {
-    if !TEST_BOOL {
-        log::debug!("{reader:?}");
-        TEST_BOOL = true;
-    }
+    log::debug!("{reader:?}");
+
     object_id().convert(move |id| match expected_id {
         Some(expected_id) if expected_id == id => Ok(id),
         Some(_) => Err(()),
