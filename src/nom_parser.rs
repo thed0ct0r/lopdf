@@ -429,7 +429,7 @@ pub fn xref_and_trailer(input: &[u8], reader: &Reader) -> crate::Result<(Xref, D
         (|input| {
             _indirect_object(input, 0, None, reader)
                 .map(|(_, obj)| {
-                    log::debug!("obj is: {obj:?}");
+                    //log::debug!("obj is: {obj:?}");
                     let res = match obj {
                         Object::Stream(stream) => decode_xref_stream(stream),
                         _ => Err(Error::Xref(XrefError::Parse)),
