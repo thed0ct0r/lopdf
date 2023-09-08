@@ -146,6 +146,7 @@ impl<'a> Reader<'a> {
         log::debug!("xref_start => {xref_start:?}");
 
         let (mut xref, mut trailer) = parser::xref_and_trailer(&self.buffer[xref_start..], &self)?;
+        log::debug!("xref & trailer => {xref:?}\n||\n{trailer:?}");
 
         // Read previous Xrefs of linearized or incremental updated document.
         let mut prev_xref_start = trailer.remove(b"Prev");
