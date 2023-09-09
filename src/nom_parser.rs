@@ -412,7 +412,10 @@ fn xref(input: &[u8]) -> NomResult<Xref> {
 
 fn trailer(input: &[u8]) -> NomResult<Dictionary> {
     log::debug!("\n\nin trailer\n\n");
-    delimited(pair(tag(b"trailer"), space), dictionary, space)(input)
+    let result = delimited(pair(tag(b"trailer"), space), dictionary, space)(input);
+    log::debug!("trailer result: {result:?}");
+
+    result
 }
 
 pub fn xref_and_trailer(input: &[u8], reader: &Reader) -> crate::Result<(Xref, Dictionary)> {
