@@ -202,6 +202,8 @@ pub fn indirect_object(
 }
 
 fn _indirect_object<'a>(should_print: bool, expected_id: Option<ObjectId>, reader: &'a Reader) -> Parser<'a, u8, (ObjectId, Object)> {
+    if should_print { log::debug!("{reader:?}"); }
+
     object_id().convert(move |id| match expected_id {
         Some(expected_id) if expected_id == id => Ok(id),
         Some(_) => Err(()),
@@ -244,9 +246,7 @@ fn xref<'a>() -> Parser<'a, u8, Xref> {
 }
 
 fn trailer<'a>() -> Parser<'a, u8, Dictionary> {
-    let result = seq(b"trailer") * space() * dictionary() - space();
-    log::debug!("trailer result: {result:?}");
-    result
+    let result = seq(b"trailer") * space() * dictionary() - space()
 }
 
 pub fn xref_and_trailer<'a>(input: &'a [u8], reader: &'a Reader) -> Result<(Xref, Dictionary)> {
@@ -258,6 +258,7 @@ pub fn xref_and_trailer<'a>(input: &'a [u8], reader: &'a Reader) -> Result<(Xref
 
 fn _xref_and_trailer<'a>(reader: &'a Reader) -> Parser<'a, u8, (Xref, Dictionary)> {
     (xref() + trailer()).convert(|(mut xref, trailer)| -> Result<_> {
+        log::debug!("trailer => {trailer:?}");
         xref.size = trailer
             .get(b"Size")
             .and_then(Object::as_i64)
