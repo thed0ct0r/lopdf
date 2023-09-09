@@ -271,7 +271,6 @@ fn dictionary(input: &[u8]) -> NomResult<Dictionary> {
         tag(b">>"),
     )(input);
 
-    log::debug!("dictionary result: {result:?}");
     result
 }
 
@@ -348,9 +347,7 @@ pub fn indirect_object(
 fn _indirect_object(
     input: &[u8], offset: usize, expected_id: Option<ObjectId>, reader: &Reader,
 ) -> crate::Result<(ObjectId, Object)> {
-    log::debug!("offset: {offset}\ninput: {:?}", String::from_utf8(input.to_vec()));
     let (i, object_id) = terminated(object_id, pair(tag(b"obj"), space))(input).map_err(|err| {
-        log::debug!("terminated1 err => {err:?}");
         Error::Parse { offset }
     })?;
     if let Some(expected_id) = expected_id {
@@ -362,7 +359,6 @@ fn _indirect_object(
     let object_offset = input.len() - i.len();
     let (_, mut object) = terminated(|i| object(i, reader), tuple((space, opt(tag(b"endobj")), space)))(i)
         .map_err(|err| {
-            log::debug!("terminated2 err => {err:?}");
             Error::Parse { offset }
         })?;
 
@@ -384,7 +380,6 @@ pub fn header(input: &[u8]) -> Option<String> {
 
 /// Decode CrossReferenceTable
 fn xref(input: &[u8]) -> NomResult<Xref> {
-    log::debug!("\n\nin xref\n\n");
     let xref_eol = map(alt((tag(b" \r"), tag(b" \n"), tag(b"\r\n"))), |_| ());
     let xref_entry = pair(
         separated_pair(unsigned_int, tag(b" "), unsigned_int),
@@ -413,16 +408,13 @@ fn xref(input: &[u8]) -> NomResult<Xref> {
         space,
     )(input);
 
-    log::debug!("xref result: {result:?}");
     result
 }
 
 fn trailer(input: &[u8]) -> NomResult<Dictionary> {
-    log::debug!("\n\nin trailer\n\n{:?}", String::from_utf8(input.to_vec()));
     let position = input.find_substring("trailer".as_bytes())
         .ok_or(nom::Err::Error(()))?;
     let result = delimited(pair(tag(b"trailer"), space), dictionary, space)(&input[position..]);
-    log::debug!("trailer result: {result:?}");
 
     result
 }
@@ -430,12 +422,10 @@ fn trailer(input: &[u8]) -> NomResult<Dictionary> {
 pub fn xref_and_trailer(input: &[u8], reader: &Reader) -> crate::Result<(Xref, Dictionary)> {
     alt((
         map(pair(xref, trailer), |(mut xref, trailer)| {
-            log::debug!("\n\nis this first???!!!\n\n");
             xref.size = trailer
                 .get(b"Size")
                 .and_then(Object::as_i64)
                 .map_err(|err| {
-                    log::debug!("trailer error => {err:?}");
                     Error::Trailer
                 })? as u32;
             Ok((xref, trailer))
@@ -450,7 +440,6 @@ pub fn xref_and_trailer(input: &[u8], reader: &Reader) -> crate::Result<(Xref, D
                     (input, res)
                 })
                 .map_err(|err| {
-                    log::debug!("nom-err => {err:?}");
                     nom::Err::Error(())
                 })
         }),
