@@ -246,7 +246,7 @@ fn xref<'a>() -> Parser<'a, u8, Xref> {
 }
 
 fn trailer<'a>() -> Parser<'a, u8, Dictionary> {
-    let result = seq(b"trailer") * space() * dictionary() - space()
+    seq(b"trailer") * space() * dictionary() - space()
 }
 
 pub fn xref_and_trailer<'a>(input: &'a [u8], reader: &'a Reader) -> Result<(Xref, Dictionary)> {
