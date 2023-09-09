@@ -392,7 +392,7 @@ fn xref(input: &[u8]) -> NomResult<Xref> {
         preceded(pair(opt(tag(b" ")), eol), many0(xref_entry)),
     );
 
-    delimited(
+    let result = delimited(
         pair(tag(b"xref"), eol),
         fold_many1(
             xref_section,
@@ -407,7 +407,10 @@ fn xref(input: &[u8]) -> NomResult<Xref> {
             },
         ),
         space,
-    )(input)
+    )(input);
+
+    log::debug!("xref result: {result:?}");
+    result
 }
 
 fn trailer(input: &[u8]) -> NomResult<Dictionary> {
