@@ -257,7 +257,7 @@ fn array(input: &[u8]) -> NomResult<Vec<Object>> {
 }
 
 fn dictionary(input: &[u8]) -> NomResult<Dictionary> {
-    delimited(
+    let result = delimited(
         pair(tag(b"<<"), space),
         fold_many0(
             pair(terminated(name, space), _direct_object),
@@ -268,7 +268,10 @@ fn dictionary(input: &[u8]) -> NomResult<Dictionary> {
             },
         ),
         tag(b">>"),
-    )(input)
+    )(input);
+
+    log::debug!("dictionary result: {result:?}");
+    result
 }
 
 fn stream<'a>(input: &'a [u8], reader: &Reader) -> NomResult<'a, Object> {
