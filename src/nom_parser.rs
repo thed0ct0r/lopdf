@@ -397,7 +397,7 @@ fn xref(input: &[u8]) -> NomResult<Xref> {
             xref_section,
             || -> Xref { Xref::new(0, XrefType::CrossReferenceTable) },
             |mut xref, ((start, _count), entries)| {
-                log::debug!("in filter");
+                log::debug!("in filter: {entries:?}");
                 for (index, ((offset, generation), is_normal)) in entries.into_iter().enumerate() {
                     if is_normal {
                         xref.insert((start + index) as u32, XrefEntry::Normal { offset, generation });
