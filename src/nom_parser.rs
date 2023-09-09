@@ -391,12 +391,13 @@ fn xref(input: &[u8]) -> NomResult<Xref> {
         preceded(pair(opt(tag(b" ")), eol), many0(xref_entry)),
     );
 
-    let result = delimited(
+    delimited(
         pair(tag(b"xref"), eol),
         fold_many1(
             xref_section,
             || -> Xref { Xref::new(0, XrefType::CrossReferenceTable) },
             |mut xref, ((start, _count), entries)| {
+                log::debug!("in filter");
                 for (index, ((offset, generation), is_normal)) in entries.into_iter().enumerate() {
                     if is_normal {
                         xref.insert((start + index) as u32, XrefEntry::Normal { offset, generation });
@@ -406,17 +407,13 @@ fn xref(input: &[u8]) -> NomResult<Xref> {
             },
         ),
         space,
-    )(input);
-
-    result
+    )(input)
 }
 
 fn trailer(input: &[u8]) -> NomResult<Dictionary> {
     let position = input.find_substring("trailer".as_bytes())
         .ok_or(nom::Err::Error(()))?;
-    let result = delimited(pair(tag(b"trailer"), space), dictionary, space)(&input[position..]);
-
-    result
+    delimited(pair(tag(b"trailer"), space), dictionary, space)(&input[position..])
 }
 
 pub fn xref_and_trailer(input: &[u8], reader: &Reader) -> crate::Result<(Xref, Dictionary)> {
