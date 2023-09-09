@@ -417,7 +417,7 @@ fn xref(input: &[u8]) -> NomResult<Xref> {
 }
 
 fn trailer(input: &[u8]) -> NomResult<Dictionary> {
-    log::debug!("\n\nin trailer\n\n");
+    log::debug!("\n\nin trailer\n\n{:?}", String::from_utf8(input));
     let result = delimited(pair(tag(b"trailer"), space), pair(nom::combinator::opt(space), dictionary), space)(input)
         .map(|r| (input, r.1.1));
     log::debug!("trailer result: {result:?}");
