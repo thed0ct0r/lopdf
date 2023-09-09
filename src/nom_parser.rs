@@ -6,6 +6,7 @@ use crate::xref::*;
 use crate::Error;
 use std::str::{self, FromStr};
 
+use nom::FindSubstring;
 use nom::branch::alt;
 use nom::bytes::complete::{tag, take, take_while, take_while1, take_while_m_n};
 use nom::character::complete::{digit0, digit1, one_of};
@@ -418,8 +419,9 @@ fn xref(input: &[u8]) -> NomResult<Xref> {
 
 fn trailer(input: &[u8]) -> NomResult<Dictionary> {
     log::debug!("\n\nin trailer\n\n{:?}", String::from_utf8(input.to_vec()));
-    let result = delimited(pair(tag(b"trailer"), space), pair(nom::combinator::opt(space), dictionary), space)(input)
-        .map(|r| (input, r.1.1));
+    let position = input.find_substring("trailer".as_bytes())
+        .ok_or(nom::Err::Error(()))?;
+    let result = delimited(pair(tag(b"trailer"), space), dictionary, space)(&input[position..]);
     log::debug!("trailer result: {result:?}");
 
     result
