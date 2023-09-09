@@ -151,7 +151,9 @@ impl<'a> Reader<'a> {
 
         // Read previous Xrefs of linearized or incremental updated document.
         let mut prev_xref_start = trailer.remove(b"Prev");
+        log::debug!("{prev_xref_start:?}");
         while let Some(prev) = prev_xref_start.and_then(|offset| offset.as_i64().ok()) {
+            log::debug!("in some weird loop");
             if prev < 0 || prev as usize > self.buffer.len() {
                 return Err(Error::Xref(XrefError::PrevStart));
             }
@@ -174,6 +176,7 @@ impl<'a> Reader<'a> {
         }
 
         let xref_entry_count = xref.max_id() + 1;
+        log::debug!("xref_entry_count: {xref_entry_count:?}");
         if xref.size != xref_entry_count {
             warn!(
                 "Size entry of trailer dictionary is {}, correct value is {}.",
