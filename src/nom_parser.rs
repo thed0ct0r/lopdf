@@ -384,7 +384,7 @@ fn xref(input: &[u8]) -> NomResult<Xref> {
     let xref_eol = map(alt((tag(b" \r"), tag(b" \n"), tag(b"\r\n"))), |_| ());
     let xref_entry = pair(
         separated_pair(unsigned_int, tag(b" "), unsigned_int),
-        delimited(tag(b" "), map(one_of("nf"), |k| k == 'n'), xref_eol),
+        delimited(tag(b" "), alt((map(tag("n"), |_| true), map(tag("f"), |_| false))), xref_eol),
     );
 
     let xref_section = pair(
